@@ -1,4 +1,4 @@
-package ru.shuevalov.checklist.data
+package ru.shuevalov.checklist.data.repository
 
 import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import ru.shuevalov.checklist.data.database.TaskDao
 import ru.shuevalov.checklist.data.database.TaskDatabase
-import ru.shuevalov.checklist.data.module.Task
+import ru.shuevalov.checklist.data.model.Task
 
 interface TasksRepository {
     fun getAllTasks(): Flow<List<Task>>

@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
-import ru.shuevalov.checklist.data.module.TaskCategory
-import ru.shuevalov.checklist.data.module.Task
+import ru.shuevalov.checklist.data.model.TaskCategory
+import ru.shuevalov.checklist.data.model.Task
 
 const val DATABASE_VERSION_CODE = 1
 

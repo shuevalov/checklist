@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import ru.shuevalov.checklist.data.module.Task
+import ru.shuevalov.checklist.data.model.Task
 
 @Dao
 interface TaskDao {

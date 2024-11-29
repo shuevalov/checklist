@@ -19,7 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.shuevalov.checklist.data.module.Task
+import ru.shuevalov.checklist.data.model.Task
 import ru.shuevalov.checklist.ui.AppViewModelProvider
 
 @OptIn(ExperimentalMaterial3Api::class)

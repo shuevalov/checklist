@@ -1,7 +1,7 @@
 package ru.shuevalov.checklist.ui.screens.task
 
-import ru.shuevalov.checklist.data.module.TaskCategory
-import ru.shuevalov.checklist.data.module.Task
+import ru.shuevalov.checklist.data.model.TaskCategory
+import ru.shuevalov.checklist.data.model.Task
 
 data class TaskUiState(
     val id: Int = 0,

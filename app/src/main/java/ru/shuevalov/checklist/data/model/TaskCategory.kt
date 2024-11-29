@@ -1,4 +1,4 @@
-package ru.shuevalov.checklist.data.module
+package ru.shuevalov.checklist.data.model
 
 enum class TaskCategory {
     WORK,

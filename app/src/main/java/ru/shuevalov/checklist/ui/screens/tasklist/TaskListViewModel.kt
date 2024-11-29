@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.shuevalov.checklist.data.TasksRepository
+import ru.shuevalov.checklist.data.repository.TasksRepository
 import ru.shuevalov.checklist.data.database.TaskDatabase
-import ru.shuevalov.checklist.data.module.Task
+import ru.shuevalov.checklist.data.model.Task
 import ru.shuevalov.checklist.ui.screens.task.TaskUiState
 import ru.shuevalov.checklist.ui.screens.task.toTask
 
