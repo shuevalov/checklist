@@ -6,12 +6,13 @@ plugins {
 
 android {
     namespace = "ru.shuevalov.checklist"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "ru.shuevalov.checklist"
         minSdk = 24
-        targetSdk = 34
+        //noinspection EditedTargetSdkVersion
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -52,6 +53,7 @@ dependencies {
 
     val room_version = "2.6.1"
     val lifecycle_version = "2.8.7"
+    val nav_version = "2.8.4"
 
     implementation("androidx.room:room-runtime:$room_version")
     // ViewModel
@@ -65,6 +67,9 @@ dependencies {
 
     // Saved state module for ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
+
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

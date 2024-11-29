@@ -22,13 +22,10 @@ class TaskRepositoryImpl(
 
     private val taskDao: TaskDao
 
-
-
     init {
         val database: TaskDatabase? = TaskDatabase.getInstance(context)
         taskDao = database!!.taskDao()
     }
-
 
     override fun getAllTasks(): Flow<List<Task>> {
         return taskDao.getTasks()

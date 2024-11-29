@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ru.shuevalov.checklist.ui.screens.checklist.ChecklistScreen
 import ru.shuevalov.checklist.ui.theme.ChecklistTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ChecklistTheme {
-
+                ChecklistScreen()
             }
         }
     }
