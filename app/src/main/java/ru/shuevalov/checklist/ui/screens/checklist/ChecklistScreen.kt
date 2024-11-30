@@ -132,7 +132,7 @@ fun GetChipColor(task: TaskCategory) {
 @Composable
 fun ChecklistBody(
     modifier: Modifier = Modifier,
-    taskList: List<Task> = emptyList(),
+    taskList: List<TaskUiState> = emptyList(),
     addTask: Boolean,
     contentPadding: PaddingValues
 ) {
@@ -156,7 +156,7 @@ fun ChecklistBody(
 
 @Composable
 fun TaskCard(
-    task: Task,
+    task: TaskUiState,
     onCheckedChange: ((Boolean) -> Unit)?
 ) {
     Row(
