@@ -1,5 +1,6 @@
 package ru.shuevalov.checklist.ui.screens.checklist
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
@@ -9,12 +10,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import ru.shuevalov.checklist.data.repository.TasksRepository
 import ru.shuevalov.checklist.data.database.TaskDatabase
 import ru.shuevalov.checklist.data.model.Task
 import ru.shuevalov.checklist.ui.screens.task.TaskUiState
 import ru.shuevalov.checklist.ui.screens.task.toTask
+import ru.shuevalov.checklist.ui.screens.task.toTaskUiState
 
 class ChecklistViewModel(private val repository: TasksRepository) : ViewModel() {
 
@@ -29,8 +32,16 @@ class ChecklistViewModel(private val repository: TasksRepository) : ViewModel() 
         }
     }
 
+    val tasks = repository.getAllTasks()
+
+    @SuppressLint("BuildListAdds")
     val uiState: StateFlow<ChecklistUiState> =
-        repository.getAllTasks().map { ChecklistUiState(it, TaskUiState()) }.stateIn(
+        repository.getAllTasks().map { list ->
+            ChecklistUiState(
+                buildList { repeat(list.size) { list.forEach { it.toTaskUiState() } } },
+                TaskUiState()
+            )
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = ChecklistUiState(taskUiState = TaskUiState())
@@ -87,6 +98,6 @@ class ChecklistViewModel(private val repository: TasksRepository) : ViewModel() 
 }
 
 data class ChecklistUiState(
-    val tasks: List<Task> = emptyList(),
+    val tasks: List<TaskUiState> = emptyList(),
     val taskUiState: TaskUiState
 )
