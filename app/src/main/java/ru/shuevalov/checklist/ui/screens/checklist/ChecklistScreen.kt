@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ChipColors
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableChipColors
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -86,6 +88,7 @@ fun ChecklistScreen(
                 sheetState = sheetState
             ) {
                 TaskSheet(
+                    sheetState = sheetState,
                     uiState = uiState.taskUiState,
                     viewModel = viewModel
                 )
@@ -94,8 +97,10 @@ fun ChecklistScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskSheet(
+    sheetState: SheetState,
     uiState: TaskUiState,
     viewModel: ChecklistViewModel
 ) {
@@ -126,6 +131,15 @@ fun TaskSheet(
                     )
                 )
             }
+        }
+
+        Button(
+            onClick = {
+                uiState
+
+            }
+        ) {
+            Text("add task")
         }
     }
 }
