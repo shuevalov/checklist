@@ -1,14 +1,22 @@
 package ru.shuevalov.checklist
 
 import android.app.Application
-import ru.shuevalov.checklist.data.AppContainer
-import ru.shuevalov.checklist.data.AppDataContainer
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
+import ru.shuevalov.checklist.di.databaseModule
+import ru.shuevalov.checklist.di.repositoryModule
+import ru.shuevalov.checklist.di.viewModelModule
+
 
 class ChecklistApplication : Application() {
-    lateinit var container: AppContainer
 
     override fun onCreate() {
         super.onCreate()
-        container = AppDataContainer(this)
+        startKoin {
+            androidLogger()
+            androidContext(this@ChecklistApplication)
+            modules(databaseModule, repositoryModule, viewModelModule)
+        }
     }
 }

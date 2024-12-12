@@ -19,7 +19,9 @@ import ru.shuevalov.checklist.ui.screens.task.TaskUiState
 import ru.shuevalov.checklist.ui.screens.task.toTask
 import ru.shuevalov.checklist.ui.screens.task.toTaskUiState
 
-class ChecklistViewModel(private val repository: TasksRepository) : ViewModel() {
+class ChecklistViewModel(
+    private val repository: TasksRepository
+) : ViewModel() {
 
     private val _dataLoading = MutableStateFlow<Boolean>(false)
     val dataLoading = _dataLoading.asStateFlow()
@@ -32,7 +34,6 @@ class ChecklistViewModel(private val repository: TasksRepository) : ViewModel() 
         }
     }
 
-    val tasks = repository.getAllTasks()
 
     @SuppressLint("BuildListAdds")
     val uiState: StateFlow<ChecklistUiState> =
