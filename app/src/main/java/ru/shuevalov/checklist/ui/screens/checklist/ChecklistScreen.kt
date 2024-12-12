@@ -43,20 +43,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.koin.androidx.compose.koinViewModel
+import org.koin.viewmodel.getViewModelKey
 import ru.shuevalov.checklist.data.model.Task
 import ru.shuevalov.checklist.data.model.TaskCategory
 import ru.shuevalov.checklist.data.model.TaskCategoryInfo
-import ru.shuevalov.checklist.ui.AppViewModelProvider
 import ru.shuevalov.checklist.ui.screens.task.TaskUiState
 import ru.shuevalov.checklist.ui.theme.ChecklistTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChecklistScreen(
-    viewModel: ChecklistViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: ChecklistViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    // val taskUiState
     val sheetState = rememberModalBottomSheetState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -135,7 +135,6 @@ fun TaskSheet(
 
         Button(
             onClick = {
-                uiState
 
             }
         ) {

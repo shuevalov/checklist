@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -11,7 +12,6 @@ android {
     defaultConfig {
         applicationId = "ru.shuevalov.checklist"
         minSdk = 24
-        //noinspection EditedTargetSdkVersion
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -54,6 +54,7 @@ dependencies {
     val room_version = "2.6.1"
     val lifecycle_version = "2.8.7"
     val nav_version = "2.8.4"
+    val koin_version = "4.0.0"
 
     implementation("androidx.room:room-runtime:$room_version")
     // ViewModel
@@ -70,6 +71,17 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
+    // Koin for Android
+    implementation("io.insert-koin:koin-core:$koin_version")
+    implementation("io.insert-koin:koin-android:$koin_version")
+    implementation("io.insert-koin:koin-androidx-navigation:$koin_version")
+    implementation("io.insert-koin:koin-androidx-compose:$koin_version")
+
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -78,4 +90,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
 }

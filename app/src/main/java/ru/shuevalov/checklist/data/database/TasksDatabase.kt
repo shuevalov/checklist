@@ -12,30 +12,13 @@ import ru.shuevalov.checklist.data.model.Task
 
 const val DATABASE_VERSION_CODE = 1
 
-@TypeConverters()
+@TypeConverters
 @Database(entities = [Task::class], version = DATABASE_VERSION_CODE, exportSchema = false)
 abstract class TaskDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
 
     companion object {
-
-        @Volatile
-        private var INSTANCE: TaskDatabase? = null
-
-        @OptIn(InternalCoroutinesApi::class)
-        fun getInstance(context: Context): TaskDatabase? {
-            if (INSTANCE == null) {
-                synchronized(this) {
-                    INSTANCE = Room.databaseBuilder(
-                        context,
-                        TaskDatabase::class.java,
-                        "best_todo_database"
-                    ).fallbackToDestructiveMigration().build().also { INSTANCE = it }
-                }
-            }
-            return INSTANCE
-        }
 
         val PREPOPULATE_DATA = listOf(
             Task(
