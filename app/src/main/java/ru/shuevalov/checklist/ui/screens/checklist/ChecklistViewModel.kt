@@ -1,8 +1,10 @@
 package ru.shuevalov.checklist.ui.screens.checklist
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,10 +13,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.shuevalov.checklist.data.repository.TasksRepository
 import ru.shuevalov.checklist.data.database.TaskDatabase
 import ru.shuevalov.checklist.data.model.Task
+import ru.shuevalov.checklist.data.model.TaskCategory
 import ru.shuevalov.checklist.ui.screens.task.TaskUiState
 import ru.shuevalov.checklist.ui.screens.task.toTask
 import ru.shuevalov.checklist.ui.screens.task.toTaskUiState
@@ -34,28 +38,57 @@ class ChecklistViewModel(
         }
     }
 
+    private fun <T> Flow<T>.mutableStateIn(
+        scope: CoroutineScope,
+        initialValue: T
+    ): MutableStateFlow<T> {
+        val flow = MutableStateFlow(initialValue)
+
+        scope.launch {
+            this@mutableStateIn.collect(flow)
+        }
+
+        return flow
+    }
+
 
     @SuppressLint("BuildListAdds")
-    val uiState: StateFlow<ChecklistUiState> =
+    private val _uiState: MutableStateFlow<ChecklistUiState> =
         repository.getAllTasks().map { list ->
             ChecklistUiState(
                 buildList { repeat(list.size) { list.forEach { it.toTaskUiState() } } },
                 TaskUiState()
             )
-        }.stateIn(
+        }.mutableStateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
             initialValue = ChecklistUiState(taskUiState = TaskUiState())
         )
+
+    val uiState = _uiState.asStateFlow()
 
 
     fun insertTask() {
         if (validateInput(uiState.value)) {
             doWithProgress {
                 viewModelScope.launch {
-                    repository.insert(uiState.value.taskUiState.toTask())
+                    repository.insert(_uiState.value.taskUiState.toTask())
                 }
             }
+        }
+    }
+
+    fun updateTaskUiState(
+        text: String,
+        category: TaskCategory
+    ) {
+        _uiState.update {
+            Log.d("ChecklistViewModel:updateTaskUiState", "before copy")
+            it.copy(
+                taskUiState = TaskUiState(
+                    title = text,
+                    category = category
+                )
+            )
         }
     }
 

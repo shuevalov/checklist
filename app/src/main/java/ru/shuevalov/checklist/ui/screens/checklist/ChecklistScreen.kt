@@ -1,6 +1,5 @@
 package ru.shuevalov.checklist.ui.screens.checklist
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ChipColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -23,7 +21,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -33,19 +30,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.androidx.compose.koinViewModel
-import org.koin.viewmodel.getViewModelKey
-import ru.shuevalov.checklist.data.model.Task
 import ru.shuevalov.checklist.data.model.TaskCategory
 import ru.shuevalov.checklist.data.model.TaskCategoryInfo
 import ru.shuevalov.checklist.ui.screens.task.TaskUiState
@@ -83,16 +75,11 @@ fun ChecklistScreen(
         )
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
-                sheetState = sheetState
-            ) {
-                TaskSheet(
-                    sheetState = sheetState,
-                    uiState = uiState.taskUiState,
-                    viewModel = viewModel
-                )
-            }
+            TaskSheet(
+                sheetState = sheetState,
+                uiState = uiState.taskUiState,
+                onDismissRequest = { showBottomSheet = false }
+            )
         }
     }
 }
@@ -102,43 +89,50 @@ fun ChecklistScreen(
 fun TaskSheet(
     sheetState: SheetState,
     uiState: TaskUiState,
-    viewModel: ChecklistViewModel
+    onDismissRequest: () -> Unit
 ) {
     var text by remember { mutableStateOf("") }
     var selected by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState
     ) {
-        Text("make task")
-        TextField(
-            value = text,
-            onValueChange = { text = it }
-        )
-        LazyRow(
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(TaskCategory.entries.toTypedArray()) { category ->
-                val info = TaskCategoryInfo(category)
-                FilterChip(
-                    onClick = { selected = !selected },
-                    selected = selected,
-                    label = { Text(info.title) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        containerColor = Color.White,
-                        labelColor = info.color
+            Text("make task")
+            TextField(
+                value = text,
+                onValueChange = {
+                    text = it
+                }
+            )
+            LazyRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(TaskCategory.entries.toTypedArray()) { category ->
+                    val info = TaskCategoryInfo(category)
+                    FilterChip(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        onClick = { selected = !selected },
+                        selected = selected,
+                        label = { Text(info.title) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            containerColor = info.color,
+                            labelColor = Color.White
+                        )
                     )
-                )
+                }
             }
-        }
 
-        Button(
-            onClick = {
-
+            Button(
+                onClick = {
+                }
+            ) {
+                Text("add task")
             }
-        ) {
-            Text("add task")
         }
     }
 }
