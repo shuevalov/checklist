@@ -6,5 +6,5 @@ import org.koin.dsl.module
 import ru.shuevalov.checklist.ui.screens.checklist.ChecklistViewModel
 
 val viewModelModule = module {
-    viewModel { ChecklistViewModel(get()) }
+    viewModelOf(::ChecklistViewModel)
 }

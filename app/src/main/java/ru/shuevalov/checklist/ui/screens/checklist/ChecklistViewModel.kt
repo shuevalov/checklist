@@ -19,6 +19,7 @@ import ru.shuevalov.checklist.data.repository.TasksRepository
 import ru.shuevalov.checklist.data.database.TaskDatabase
 import ru.shuevalov.checklist.data.model.Task
 import ru.shuevalov.checklist.data.model.TaskCategory
+import ru.shuevalov.checklist.di.viewModelModule
 import ru.shuevalov.checklist.ui.screens.task.TaskUiState
 import ru.shuevalov.checklist.ui.screens.task.toTask
 import ru.shuevalov.checklist.ui.screens.task.toTaskUiState
@@ -27,111 +28,92 @@ class ChecklistViewModel(
     private val repository: TasksRepository
 ) : ViewModel() {
 
-    private val _dataLoading = MutableStateFlow<Boolean>(false)
-    val dataLoading = _dataLoading.asStateFlow()
-
-    init {
-        for (task in TaskDatabase.PREPOPULATE_DATA) {
-            viewModelScope.launch {
-                repository.insert(task)
-            }
-        }
-    }
-
-    private fun <T> Flow<T>.mutableStateIn(
-        scope: CoroutineScope,
-        initialValue: T
-    ): MutableStateFlow<T> {
-        val flow = MutableStateFlow(initialValue)
-
-        scope.launch {
-            this@mutableStateIn.collect(flow)
-        }
-
-        return flow
-    }
+//    init {
+//        for (task in TaskDatabase.PREPOPULATE_DATA) {
+//            viewModelScope.launch {
+//                repository.insert(task)
+//            }
+//        }
+//    }
 
 
-    @SuppressLint("BuildListAdds")
-    private val _uiState: MutableStateFlow<ChecklistUiState> =
-        repository.getAllTasks().map { list ->
-            ChecklistUiState(
-                buildList { repeat(list.size) { list.forEach { it.toTaskUiState() } } },
-                TaskUiState()
-            )
-        }.mutableStateIn(
+    val uiState: StateFlow<ChecklistUiState> =
+        repository.getAllTasks().map {
+            ChecklistUiState(it)
+        }.stateIn(
             scope = viewModelScope,
-            initialValue = ChecklistUiState(taskUiState = TaskUiState())
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = ChecklistUiState()
         )
 
-    val uiState = _uiState.asStateFlow()
-
-
-    fun insertTask() {
-        if (validateInput(uiState.value)) {
-            doWithProgress {
-                viewModelScope.launch {
-                    repository.insert(_uiState.value.taskUiState.toTask())
-                }
-            }
-        }
+    fun deleteTask(task: Task) = viewModelScope.launch {
+        repository.delete(task)
     }
 
-    fun updateTaskUiState(
-        text: String,
-        category: TaskCategory
-    ) {
-        _uiState.update {
-            Log.d("ChecklistViewModel:updateTaskUiState", "before copy")
-            it.copy(
-                taskUiState = TaskUiState(
-                    title = text,
-                    category = category
-                )
-            )
-        }
+    fun updateTask(task: Task) = viewModelScope.launch {
+        repository.update(task)
     }
 
-    fun updateTask() = doWithProgress {
-        viewModelScope.launch {
-            repository.update(uiState.value.taskUiState.toTask())
-        }
+    fun insertTask(task: Task) = viewModelScope.launch {
+        repository.insert(task)
     }
 
-    fun deleteTask() = doWithProgress {
-        viewModelScope.launch {
-            repository.delete(uiState.value.taskUiState.toTask())
-        }
-    }
 
-    fun getAllTasks(): Flow<List<Task>> {
-        _dataLoading.value = true
-        val tasks = repository.getAllTasks()
-        _dataLoading.value = false
-        return tasks
-    }
-
-    private fun doWithProgress(func: () -> Unit) {
-        showProgress()
-        func()
-        hideProgress()
-    }
-
-    private fun validateInput(uiState: ChecklistUiState): Boolean = with(uiState) {
-        taskUiState.title.isNotBlank()
-    }
-
-    private fun showProgress() {
-        _dataLoading.value = true
-    }
-
-    private fun hideProgress() {
-        _dataLoading.value = false
-    }
+//
+//
+//
+//    fun insertTask() {
+//        if (validateInput(uiState.value)) {
+//            doWithProgress {
+//                viewModelScope.launch {
+//                    repository.insert(_uiState.value.taskUiState.toTask())
+//                }
+//            }
+//        }
+//    }
+//
+//    fun updateTaskUiState(
+//        state: TaskUiState
+//    ) {
+//        _uiState.update {
+//            Log.d("ChecklistViewModel:updateTaskUiState", "before copy")
+//            it.copy(
+//                taskUiState = state
+//            )
+//        }
+//    }
+//
+//    fun updateTask() = doWithProgress {
+//        viewModelScope.launch {
+//            repository.update(uiState.value.taskUiState.toTask())
+//        }
+//    }
+//
+//    fun deleteTask() = doWithProgress {
+//        viewModelScope.launch {
+//            repository.delete(uiState.value.taskUiState.toTask())
+//        }
+//    }
+//
+//    fun getAllTasks(): Flow<List<Task>> {
+//        _dataLoading.value = true
+//        val tasks = repository.getAllTasks()
+//        _dataLoading.value = false
+//        return tasks
+//    }
+//
+//    private fun doWithProgress(func: () -> Unit) {
+//        showProgress()
+//        func()
+//        hideProgress()
+//    }
+//
+//    private fun validateInput(uiState: ChecklistUiState): Boolean = with(uiState) {
+//        taskUiState.title.isNotBlank()
+//    }
 
 }
 
 data class ChecklistUiState(
-    val tasks: List<TaskUiState> = emptyList(),
-    val taskUiState: TaskUiState
+    val tasks: List<Task> = emptyList()
 )
